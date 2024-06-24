@@ -12,20 +12,23 @@ export default function Home() {
         {success && (
           <div className="w-72 rounded-xl">
             <Alert className='rounded-xl bg-paleblue flex items-center' icon={<Image src={'/success.png'} width={30} height={30} alt='Successfully submitted!' />} severity="success">
-              Successfully submitted!
+              Successfully submitted! <span className="underline hover:italic ">View your submission!</span>
             </Alert>
           </div>
         )}
-        {success == false && (
+        {/* {success == false && (
           <div className="w-72 rounded-xl">
             <Alert className='rounded-xl bg-rose-200 flex items-center font-mainFont text-lg' icon={<Image src={'/fail.png'} width={30} height={30} alt='Failed to update' />} severity="error">
               Fields were empty!
             </Alert>
           </div>
-        )}
+        )} */}
       </div>
-      <div className="absolute top-20 left-28">
-        <FormComponent success={success} setSuccess={setSuccess} />
+      <div className="absolute top-12 left-28">
+        <div className="relative">
+          <h1 className="absolute font-darling text-5xl -top-6 left-[33%] text-[#752727] text-shadow">Sign Up</h1>
+          <FormComponent success={success} setSuccess={setSuccess} />
+        </div>
       </div>
     </div>
   );

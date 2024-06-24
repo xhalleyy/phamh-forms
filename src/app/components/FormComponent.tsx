@@ -1,17 +1,49 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-
+import { Datepicker, TextInput } from "flowbite-react";
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import { Tooltip } from '@mui/material';
 
 type FormProp = {
     success: boolean | undefined
     setSuccess: React.Dispatch<React.SetStateAction<boolean | undefined>>
 }
 
-const FormComponent = ({success, setSuccess} : FormProp) => {
-    const [form, setForm] = useState({ firstName: '', lastName: '', email: '', address: '', phoneNumber: '', password: '', confirmPassword: '' })
-    // boolean for the condition for the submit button
-    const isFilled = form.firstName !== "" && form.lastName !== "" && form.email !== "" && form.address !== "" && form.phoneNumber !== "" && form.password !== "" && form.confirmPassword !== "";
-    const [isSubmitted, setIsSubmitted] = useState(false);
+const FormComponent = ({ success, setSuccess }: FormProp) => {
+    const [form, setForm] = useState({ firstName: '', lastName: '', email: '', birthday: '', address: '', phoneNumber: '', password: '', confirmPassword: '' })
+    const [emailError, setEmailError] = useState('');
+    const [phoneError, setPhoneError] = useState('');
+    const [isSubmitted, setIsSubmitted] = useState(false)
+    const [passwordError, setPasswordError] = useState('');
+    const [passVisibility, setPassVisibility] = useState(false)
+    const [confirmVisibility, setConfirmVisibility] = useState(false)
+
+    const isFilled = form.firstName !== "" && form.lastName !== "" && form.email !== "" && form.password !== "" && form.confirmPassword !== "";
+    // const isFilled = Object.values(form).every(value => value !== "");
+
+    const validEmail = (email: string) => {
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailPattern.test(email);
+    }
+
+    const validPhoneNumber = (number: string) => {
+        const phonePattern = /^\(\d{3}\)-\d{3}-\d{4}$/;
+        return phonePattern.test(number);
+    }
+
+    const validatePassword = () => {
+        if (form.password !== form.confirmPassword) {
+            setPasswordError('Passwords do not match');
+            return false;
+        }
+        return true;
+    };
+
+    const handleDateChange = (date: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedDate = date.target.value; // Extract the date value from the event
+        setForm({ ...form, birthday: selectedDate });
+    };
 
     const updateForm = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm({
@@ -21,83 +53,141 @@ const FormComponent = ({success, setSuccess} : FormProp) => {
             ...form,
             [e.target.name]: e.target.value
         })
+
+        if (e.target.name === 'password' || e.target.name === 'confirmPassword') {
+            setPasswordError('');
+        }
     }
 
-    const handleForm = () => {
-        isFilled ? setIsSubmitted(true) : setIsSubmitted(false);
-        isFilled ? setSuccess(true) : setSuccess(false);
-    }
+    const handleForm = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const isEmailValid = validEmail(form.email);
+        let isPhoneValid = true;
+        const matchedPasswords = validatePassword()
 
-    // useEffect(() => {
-    //     console.log(form)
-    // }, [form])
+        if (form.phoneNumber !== '') {
+            isPhoneValid = validPhoneNumber(form.phoneNumber)
+        }
+        if (isFilled && isEmailValid && isPhoneValid && matchedPasswords) {
+            setSuccess(true);
+        }
+
+
+        setEmailError(isEmailValid ? '' : 'Invalid email format. Please make sure there is an @ with no spaces.');
+        setPhoneError(isPhoneValid ? '' : 'Invalid phone number format, ex: (XXX)-XXX-XXXX');
+
+        setIsSubmitted(true);
+    }
 
     useEffect(() => {
-        if (success && isSubmitted) {
+        if (success) {
             setForm({
                 firstName: '',
                 lastName: '',
                 email: '',
+                birthday: '',
                 address: '',
                 phoneNumber: '',
                 password: '',
                 confirmPassword: ''
             });
-            setSuccess(undefined);
-            setIsSubmitted(false);
+
+            const timer = setTimeout(() => {
+                setSuccess(undefined);
+            }, 8000);
+
+            return () => clearTimeout(timer);
+
         }
-    }, [success, isSubmitted]);
+    }, [success]);
 
     return (
-        <div className='bg-white h-[600px] w-[550px] rounded-3xl'>
-            
-            <form action="" className='py-10'>
+        <div className='bg-white/90 border-4 border-[#fe81bb] h-[630px] w-[550px] rounded-3xl'>
+
+            <form onSubmit={handleForm} action="" className='py-10'>
                 <div className='grid grid-cols-3 items-center mb-5'>
                     <label className='col-span-1 flex justify-center' htmlFor="block rounded p-3">
-                        First Name
+                        First Name*
                     </label>
-                    <input value={form.firstName} onChange={updateForm} type="text" className="col-span-2 border rounded p-2 me-10" placeholder="Enter First Name" name="firstName" />
+                    <TextInput value={form.firstName} onChange={updateForm} type="text" className="col-span-2 me-10 bg-white active:bg-[#feffc7] focus-within:bg-[#feffc7]" placeholder="Enter First Name" name="firstName" required maxLength={100} />
                 </div>
                 <div className='grid grid-cols-3 items-center mb-5'>
                     <label className='col-span-1 flex justify-center' htmlFor="block rounded p-3">
-                        Last Name
+                        Last Name*
                     </label>
-                    <input value={form.lastName} onChange={updateForm} type="text" className="col-span-2 border rounded p-2 me-10" placeholder="Enter Last Name" name="lastName" />
+                    <TextInput value={form.lastName} onChange={updateForm} type="text" className="col-span-2 me-10" placeholder="Enter Last Name" name="lastName" required maxLength={100} />
+                    {/* <input value={form.lastName} onChange={updateForm} type="text" className="col-span-2 border rounded p-2 me-10" placeholder="Enter Last Name" name="lastName" required maxLength={100} /> */}
+                </div>
+                <div className='grid grid-cols-3 items-center mb-5'>
+                    {isSubmitted && emailError && <div className="text-red-500 col-span-3 flex justify-center">{emailError}</div>}
+                    <label className='col-span-1 flex justify-center' htmlFor="block rounded p-3">
+                        Email*
+                    </label>
+                    <TextInput value={form.email} onChange={updateForm} type="text" className="col-span-2 me-10" placeholder="ex: hello123@gmail.com" name="email" required />
+                    {/* <input value={form.email} onChange={updateForm} type="text" className="col-span-2 border rounded p-2 me-10" placeholder="ex: hello123@gmail.com" name="email" required /> */}
                 </div>
                 <div className='grid grid-cols-3 items-center mb-5'>
                     <label className='col-span-1 flex justify-center' htmlFor="block rounded p-3">
-                        Email
+                        Birthday*
                     </label>
-                    <input value={form.email} onChange={updateForm} type="text" className="col-span-2 border rounded p-2 me-10" placeholder="Enter Email" name="email" />
+                    <Datepicker
+                        // value={form.birthday}
+                        onChange={handleDateChange}
+                        className=""
+                        maxDate={new Date()}
+                        name="birthday"
+                        id="birthday"
+                        required
+                    />
                 </div>
                 <div className='grid grid-cols-3 items-center mb-5'>
                     <label className='col-span-1 flex justify-center' htmlFor="block rounded p-3">
                         Home Address
                     </label>
-                    <input value={form.address} onChange={updateForm} type="text" className="col-span-2 border rounded p-2 me-10" placeholder="Enter Address" name="address" />
+                    <TextInput value={form.address} onChange={updateForm} type="text" className="col-span-2 me-10" placeholder="Enter Address" name="address" maxLength={100} />
+                    {/* <input value={form.address} onChange={updateForm} type="text" className="col-span-2 border rounded p-2 me-10" placeholder="Enter Address" name="address" maxLength={100} /> */}
                 </div>
                 <div className='grid grid-cols-3 items-center mb-5'>
+                    {isSubmitted && phoneError && <div className="text-red-500 col-span-3 flex justify-center">{phoneError}</div>}
                     <label className='col-span-1 flex justify-center' htmlFor="block rounded p-3">
                         Phone Number
                     </label>
-                    <input value={form.phoneNumber} onChange={updateForm} type="text" className="col-span-2 border rounded p-2 me-10" placeholder="Enter Phone Number" name="phoneNumber" />
+                    <TextInput value={form.phoneNumber} onChange={updateForm} type="text" className="col-span-2 me-10" placeholder="ex: (XXX)-XXX-XXXX" name="phoneNumber" />
+                    {/* <input value={form.phoneNumber} onChange={updateForm} type="text" className="col-span-2 border rounded p-2 me-10" placeholder="ex: (XXX)-XXX-XXXX" name="phoneNumber" /> */}
                 </div>
                 <div className='grid grid-cols-3 items-center mb-5'>
                     <label className='col-span-1 flex justify-center' htmlFor="block rounded p-3">
-                        Password
+                        Password*
                     </label>
-                    <input value={form.password} onChange={updateForm} type="text" className="col-span-2 border rounded p-2 me-10" placeholder="Enter Password" name="password" />
+                    <TextInput value={form.password} onChange={updateForm} type="password" className="col-span-2 me-10" placeholder="Enter Password" name="password" required
+                        minLength={15}
+                        pattern="^(?=.*[A-Z])(?=.*[0-9])(?=.*[?@#$%^&*])[A-Za-z0-9?@#$%^&*]{15,}$"
+                        color={(isSubmitted && !success) ? "failure" : ''}
+                        helperText={isSubmitted &&
+                            <>
+                              <div className="font-medium col-span-3">Password must be at least 15 characters and have at least one capital letter, one number, and one special character (? @ # $ % ^ & *).</div>
+                            </>
+                          }
+                        
+                        />
+                    {/* <input value={form.password} onChange={updateForm} type="password" className="col-span-2 border rounded p-2 me-10" placeholder="Enter Password" name="password" required
+                        minLength={15}
+                        pattern="^(?=.*[A-Z])(?=.*[0-9])(?=.*[?@#$%^&*])[A-Za-z0-9?@#$%^&*]{15,}$"
+                        title="Password must be at least 15 characters and have at least one capital letter, one number, and one special character (? @ # $ % ^ & *)." /> */}
                 </div>
                 <div className='grid grid-cols-3 items-center mb-5'>
+                    {isSubmitted && passwordError && <div className="text-red-500 col-span-3 flex justify-center">{passwordError}</div>}
                     <label className='col-span-1 flex justify-center' htmlFor="block rounded p-3">
-                        Confirm Password
+                        Confirm Password*
                     </label>
-                    <input value={form.confirmPassword} onChange={updateForm} type="text" className="col-span-2 border rounded p-2 me-10" placeholder="Confirm Password" name="confirmPassword" />
+                    <TextInput value={form.confirmPassword} onChange={updateForm} type="password" className="col-span-2 me-10" placeholder="Confirm Password" name="confirmPassword" required minLength={15} />
+                    {/* <input value={form.confirmPassword} onChange={updateForm} type="password" className="col-span-2 border rounded p-2 me-10" placeholder="Confirm Password" name="confirmPassword" required minLength={15}
+                    /> */}
                 </div>
 
-                <div className='flex justify-end pe-10'>
-                    <button onClick={handleForm} className={`text-white py-2 px-4 rounded ${isFilled ? 'bg-green-500 hover:bg-green-700' : 'bg-red-500 hover:bg-red-700'}`} type="button">
-                        {isFilled ? 'Submit' : 'Clear'}
+                <div className='absolute bottom-6 right-7'>
+                    <button className={`text-white py-2 px-4 rounded-xl ${isFilled ? 'bg-[#56b681] hover:bg-green-700' : ' bg-slate-300 cursor-default'}`}>
+                        Submit
                     </button>
                 </div>
             </form>

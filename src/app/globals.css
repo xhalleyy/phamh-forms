@@ -2,8 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  @font-face {
+      font-family: darling;
+      src: url(../utils/Darling\ Coffee.otf);
+  }
+
+}
+
 .backgroundImg {
-  background: url(../utils/background.jpg) no-repeat center center fixed; 
+  background: url(../utils/background2.png) no-repeat center center fixed; 
   background-size: cover;
   min-height: 100vh;
 }
+
+.text-shadow {
+  text-shadow: 2px 2px #fe81bb
+}
+
