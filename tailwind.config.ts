@@ -11,6 +11,7 @@ module.exports = {
   theme: {
     fontFamily: {
       "darling": ["darling"],
+      "easter": ["easter"],
     },
     extend: {
     },

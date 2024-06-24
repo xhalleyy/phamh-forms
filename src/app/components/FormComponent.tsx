@@ -102,32 +102,32 @@ const FormComponent = ({ success, setSuccess }: FormProp) => {
     }, [success]);
 
     return (
-        <div className='bg-white/90 border-4 border-[#fe81bb] h-[630px] w-[550px] rounded-3xl'>
+        <div className='bg-white/90 border-4 border-[#fe81bb] h-[630px] w-[550px] rounded-3xl shadow-md'>
 
-            <form onSubmit={handleForm} action="" className='py-10'>
-                <div className='grid grid-cols-3 items-center mb-5'>
-                    <label className='col-span-1 flex justify-center' htmlFor="block rounded p-3">
+            <form onSubmit={handleForm} action="" className='pt-10'>
+                <div className='grid grid-cols-3 items-center mb-4'>
+                    <label className='ps-4 col-span-1 text-center font-darling text-lg text-[#752727] flex justify-center' htmlFor="block rounded p-3">
                         First Name*
                     </label>
                     <TextInput value={form.firstName} onChange={updateForm} type="text" className="col-span-2 me-10 bg-white active:bg-[#feffc7] focus-within:bg-[#feffc7]" placeholder="Enter First Name" name="firstName" required maxLength={100} />
                 </div>
-                <div className='grid grid-cols-3 items-center mb-5'>
-                    <label className='col-span-1 flex justify-center' htmlFor="block rounded p-3">
+                <div className='grid grid-cols-3 items-center mb-4'>
+                    <label className='ps-4 col-span-1 text-center font-darling text-lg text-[#752727] flex justify-center' htmlFor="block rounded p-3">
                         Last Name*
                     </label>
                     <TextInput value={form.lastName} onChange={updateForm} type="text" className="col-span-2 me-10" placeholder="Enter Last Name" name="lastName" required maxLength={100} />
                     {/* <input value={form.lastName} onChange={updateForm} type="text" className="col-span-2 border rounded p-2 me-10" placeholder="Enter Last Name" name="lastName" required maxLength={100} /> */}
                 </div>
-                <div className='grid grid-cols-3 items-center mb-5'>
-                    {isSubmitted && emailError && <div className="text-red-500 col-span-3 flex justify-center">{emailError}</div>}
-                    <label className='col-span-1 flex justify-center' htmlFor="block rounded p-3">
+                <div className='grid grid-cols-3 items-center mb-4'>
+                    {isSubmitted && emailError && <div className="text-red-500 col-span-3 flex justify-center text-sm font-bold">{emailError}</div>}
+                    <label className='ps-4 col-span-1 text-center font-darling text-lg text-[#752727] flex justify-center' htmlFor="block rounded p-3">
                         Email*
                     </label>
                     <TextInput value={form.email} onChange={updateForm} type="text" className="col-span-2 me-10" placeholder="ex: hello123@gmail.com" name="email" required />
                     {/* <input value={form.email} onChange={updateForm} type="text" className="col-span-2 border rounded p-2 me-10" placeholder="ex: hello123@gmail.com" name="email" required /> */}
                 </div>
-                <div className='grid grid-cols-3 items-center mb-5'>
-                    <label className='col-span-1 flex justify-center' htmlFor="block rounded p-3">
+                <div className='grid grid-cols-3 items-center mb-4'>
+                    <label className='ps-4 col-span-1 text-center font-darling text-lg text-[#752727] flex justify-center' htmlFor="block rounded p-3">
                         Birthday*
                     </label>
                     <Datepicker
@@ -140,53 +140,43 @@ const FormComponent = ({ success, setSuccess }: FormProp) => {
                         required
                     />
                 </div>
-                <div className='grid grid-cols-3 items-center mb-5'>
-                    <label className='col-span-1 flex justify-center' htmlFor="block rounded p-3">
+                <div className='grid grid-cols-3 items-center mb-4'>
+                    <label className='ps-4 col-span-1 text-center font-darling text-lg text-[#752727] flex justify-center' htmlFor="block rounded p-3">
                         Home Address
                     </label>
                     <TextInput value={form.address} onChange={updateForm} type="text" className="col-span-2 me-10" placeholder="Enter Address" name="address" maxLength={100} />
                     {/* <input value={form.address} onChange={updateForm} type="text" className="col-span-2 border rounded p-2 me-10" placeholder="Enter Address" name="address" maxLength={100} /> */}
                 </div>
-                <div className='grid grid-cols-3 items-center mb-5'>
-                    {isSubmitted && phoneError && <div className="text-red-500 col-span-3 flex justify-center">{phoneError}</div>}
-                    <label className='col-span-1 flex justify-center' htmlFor="block rounded p-3">
+                <div className='grid grid-cols-3 items-center mb-4'>
+                    {isSubmitted && phoneError && <div className="text-red-500 col-span-3 flex justify-center text-sm font-bold">{phoneError}</div>}
+                    <label className='ps-4 col-span-1 text-center font-darling text-lg text-[#752727] flex justify-center' htmlFor="block rounded p-3">
                         Phone Number
                     </label>
                     <TextInput value={form.phoneNumber} onChange={updateForm} type="text" className="col-span-2 me-10" placeholder="ex: (XXX)-XXX-XXXX" name="phoneNumber" />
                     {/* <input value={form.phoneNumber} onChange={updateForm} type="text" className="col-span-2 border rounded p-2 me-10" placeholder="ex: (XXX)-XXX-XXXX" name="phoneNumber" /> */}
                 </div>
-                <div className='grid grid-cols-3 items-center mb-5'>
-                    <label className='col-span-1 flex justify-center' htmlFor="block rounded p-3">
+                <div className='grid grid-cols-3 items-center mb-4'>
+                    <label className='ps-4 col-span-1 text-center font-darling text-lg text-[#752727] flex justify-center' htmlFor="block rounded p-3">
                         Password*
                     </label>
                     <TextInput value={form.password} onChange={updateForm} type="password" className="col-span-2 me-10" placeholder="Enter Password" name="password" required
                         minLength={15}
                         pattern="^(?=.*[A-Z])(?=.*[0-9])(?=.*[?@#$%^&*])[A-Za-z0-9?@#$%^&*]{15,}$"
-                        color={(isSubmitted && !success) ? "failure" : ''}
-                        helperText={isSubmitted &&
-                            <>
-                              <div className="font-medium col-span-3">Password must be at least 15 characters and have at least one capital letter, one number, and one special character (? @ # $ % ^ & *).</div>
-                            </>
-                          }
-                        
+                        title="Password must be at least 15 characters and have at least one capital letter, one number, and one special character (? @ # $ % ^ & *)."
                         />
-                    {/* <input value={form.password} onChange={updateForm} type="password" className="col-span-2 border rounded p-2 me-10" placeholder="Enter Password" name="password" required
-                        minLength={15}
-                        pattern="^(?=.*[A-Z])(?=.*[0-9])(?=.*[?@#$%^&*])[A-Za-z0-9?@#$%^&*]{15,}$"
-                        title="Password must be at least 15 characters and have at least one capital letter, one number, and one special character (? @ # $ % ^ & *)." /> */}
                 </div>
-                <div className='grid grid-cols-3 items-center mb-5'>
-                    {isSubmitted && passwordError && <div className="text-red-500 col-span-3 flex justify-center">{passwordError}</div>}
-                    <label className='col-span-1 flex justify-center' htmlFor="block rounded p-3">
+                <div className='grid grid-cols-3 items-center mb-4'>
+                    {isSubmitted && passwordError && <div className="text-red-500 col-span-3 text-sm font-bold flex justify-center">{passwordError}</div>}
+                    <label className='ps-4 col-span-1 text-center flex justify-center font-darling text-lg text-[#752727]' htmlFor="block rounded p-3">
                         Confirm Password*
                     </label>
-                    <TextInput value={form.confirmPassword} onChange={updateForm} type="password" className="col-span-2 me-10" placeholder="Confirm Password" name="confirmPassword" required minLength={15} />
+                    <TextInput value={form.confirmPassword} onChange={updateForm} type="password" className="col-span-2 me-10 " placeholder="Confirm Password" name="confirmPassword" required minLength={15} />
                     {/* <input value={form.confirmPassword} onChange={updateForm} type="password" className="col-span-2 border rounded p-2 me-10" placeholder="Confirm Password" name="confirmPassword" required minLength={15}
                     /> */}
                 </div>
 
                 <div className='absolute bottom-6 right-7'>
-                    <button className={`text-white py-2 px-4 rounded-xl ${isFilled ? 'bg-[#56b681] hover:bg-green-700' : ' bg-slate-300 cursor-default'}`}>
+                    <button className={`text-white py-2 px-4 rounded-xl font-darling ${isFilled ? 'bg-[#56b681] hover:bg-green-700' : ' bg-slate-300 cursor-default'}`}>
                         Submit
                     </button>
                 </div>

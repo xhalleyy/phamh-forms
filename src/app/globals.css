@@ -7,6 +7,10 @@
       font-family: darling;
       src: url(../utils/Darling\ Coffee.otf);
   }
+  @font-face {
+    font-family: easter;
+    src: url(../utils/Easter-Sublimation.otf);
+}
 
 }
 
