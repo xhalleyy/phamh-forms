@@ -4,27 +4,41 @@ import { CustomFlowbiteTheme, Datepicker, TextInput } from "flowbite-react";
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import { TextField, Tooltip } from '@mui/material';
+import { error } from 'console';
 
 type FormProp = {
     success: boolean | undefined
     setSuccess: React.Dispatch<React.SetStateAction<boolean | undefined>>
+    isSubmitted: boolean
+    setIsSubmitted: React.Dispatch<React.SetStateAction<boolean>>
+    isFilled: boolean
+    setIsFilled: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const FormComponent = ({ success, setSuccess }: FormProp) => {
+const FormComponent = ({ success, setSuccess, isSubmitted, setIsSubmitted, isFilled, setIsFilled }: FormProp) => {
     const [form, setForm] = useState({ firstName: '', lastName: '', email: '', birthday: '', address: '', phoneNumber: '', password: '', confirmPassword: '' })
     const [emailError, setEmailError] = useState('');
     const [phoneError, setPhoneError] = useState('');
-    const [isSubmitted, setIsSubmitted] = useState(false)
+    // const [isSubmitted, setIsSubmitted] = useState(false)
     const [passwordError, setPasswordError] = useState('');
+    const [formatError, setFormatError] = useState('')
     const [passVisibility, setPassVisibility] = useState(false)
     const [confirmVisibility, setConfirmVisibility] = useState(false)
 
     const [errors, setErrors] = useState({
-        birthday: false
+        firstName: false,
+        lastName: false,
+        email: false,
+        birthday: false,
+        password: false,
+        confirmation: false
     });
 
-    const isFilled = form.firstName !== "" && form.lastName !== "" && form.email !== "" && form.password !== "" && form.confirmPassword !== "" && form.birthday !== null;
-    // const isFilled = Object.values(form).every(value => value !== "");
+    if(form.firstName !== "" && form.lastName !== "" && form.email !== "" && form.password !== "" && form.confirmPassword !== "" && form.birthday !== null){
+        setIsFilled(true)
+    }else{
+        setIsFilled(false)
+    }
 
     const validEmail = (email: string) => {
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -43,6 +57,15 @@ const FormComponent = ({ success, setSuccess }: FormProp) => {
         }
         return true;
     };
+
+    const formattedPassword = (password: string) => {
+        const passwordRegex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[?@#$%^&*])[A-Za-z0-9?@#$%^&*]{15,}$/;
+        if (!passwordRegex.test(password)) {
+            setFormatError('Password must be at least 15 characters and have at least one capital letter, one number, and one special character (? @ # $ % ^ & *).');
+        } else {
+            setFormatError('');
+        }
+    }
 
     const updateForm = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm({
@@ -68,16 +91,28 @@ const FormComponent = ({ success, setSuccess }: FormProp) => {
             isPhoneValid = validPhoneNumber(form.phoneNumber)
         }
 
-        if (!form.birthday) {
-            setErrors({ ...errors, birthday: true });
+        if(form.password !== '') {
+            formattedPassword(form.password)
         }
 
-        if (isFilled && isEmailValid && isPhoneValid && matchedPasswords && !errors.birthday) {
+        const updatedErrors = {
+            firstName: form.firstName === '',
+            lastName: form.lastName === '',
+            email: form.email === '',
+            birthday: !form.birthday,
+            password: form.password === '',
+            confirmation: form.confirmPassword === ''
+        };
+        setErrors(updatedErrors);
+
+        if (isFilled && isEmailValid && isPhoneValid && matchedPasswords && !updatedErrors.firstName && !updatedErrors.lastName && !updatedErrors.email && !updatedErrors.birthday) {
             setSuccess(true);
+        }else{
+            setSuccess(false)
         }
 
 
-        setEmailError(isEmailValid ? '' : 'Invalid email format. Please make sure there is an @ with no spaces.');
+        setEmailError(isEmailValid ? '' : 'Invalid email format, ex: hello@gmail.com');
         setPhoneError(isPhoneValid ? '' : 'Invalid phone number format, ex: (###)-###-####');
 
         setIsSubmitted(true);
@@ -149,29 +184,53 @@ const FormComponent = ({ success, setSuccess }: FormProp) => {
     }
 
     return (
-        <div className='bg-white/90 border-4 border-[#fe81bb] h-[670px] md:h-[630px] md:w-[550px] rounded-3xl shadow-md'>
+        <div className='bg-white/90 border-4 border-[#fe81bb] h-[720px] md:h-[670px] md:w-[550px] rounded-3xl shadow-md'>
 
-            <form onSubmit={handleForm} action="" className='pt-10'>
+            <form onSubmit={handleForm} action="" className='pt-9'>
                 <div className='grid grid-cols-3 items-center mb-4'>
+                    {(isSubmitted && errors.firstName == true) &&
+                        <div className='col-span-3 grid grid-cols-3'>
+                            <div className='col-span-1'></div>
+                            <div className="text-red-500 col-span-2 px-3 flex justify-start text-xs font-bold">First Name is required.</div>
+                        </div>
+                    }
                     <label className='ps-2 md:ps-4 col-span-1 text-center font-darling text-lg text-[#752727] flex justify-center' htmlFor="block rounded p-3">
                         First Name*
                     </label>
-                    <TextInput theme={customText} color="white" value={form.firstName} onChange={updateForm} type="text" className="col-span-2 mx-3 md:me-10 bg-white active:bg-[#feffc7] focus-within:bg-[#feffc7]" placeholder="Enter First Name" name="firstName" required maxLength={100} />
+                    <TextInput theme={customText} color="white" value={form.firstName} onChange={updateForm} type="text" className="col-span-2 mx-3 md:me-10 bg-white active:bg-[#feffc7] focus-within:bg-[#feffc7]" placeholder="Enter First Name" name="firstName" maxLength={100} />
                 </div>
                 <div className='grid grid-cols-3 items-center mb-4'>
+                    {isSubmitted && errors.lastName &&
+                        <div className='col-span-3 grid grid-cols-3'>
+                            <div className='col-span-1'></div>
+                            <div className="text-red-500 col-span-2 px-3 flex justify-start text-xs font-bold">Last Name is required.</div>
+                        </div>
+                    }
                     <label className='ps-2 md:ps-4 col-span-1 text-center font-darling text-lg text-[#752727] flex justify-center' htmlFor="block rounded p-3">
                         Last Name*
                     </label>
-                    <TextInput theme={customText} color="white" value={form.lastName} onChange={updateForm} type="text" className="col-span-2 mx-3 md:me-10" placeholder="Enter Last Name" name="lastName" required maxLength={100} />
+                    <TextInput theme={customText} color="white" value={form.lastName} onChange={updateForm} type="text" className="col-span-2 mx-3 md:me-10" placeholder="Enter Last Name" name="lastName" maxLength={100} />
                 </div>
                 <div className='grid grid-cols-3 items-center mb-4'>
-                    {isSubmitted && emailError && <div className="text-red-500 col-span-3 text-center px-3 flex justify-center text-sm font-bold">{emailError}</div>}
+                    {isSubmitted && errors.email && <div className='col-span-3 grid grid-cols-3'>
+                        <div className='col-span-1'></div>
+                        <div className="text-red-500 col-span-2 px-3 flex justify-start text-xs font-bold">Email is required.</div>
+                    </div>}
+                    {(isSubmitted && emailError && !errors.email )&& <div className='col-span-3 grid grid-cols-3'>
+                        <div className='col-span-1'></div>
+                        <div className="text-red-500 col-span-2 px-3 flex justify-start text-xs font-bold">{emailError}</div>
+                    </div>}
                     <label className='ps-2 md:ps-4 col-span-1 text-center font-darling text-lg text-[#752727] flex justify-center' htmlFor="block rounded p-3">
                         Email*
                     </label>
-                    <TextInput theme={customText} color="white" value={form.email} onChange={updateForm} type="text" className="col-span-2 mx-3 md:me-10" placeholder="ex: hello123@gmail.com" name="email" required />
+                    <TextInput theme={customText} color="white" value={form.email} onChange={updateForm} type="text" className="col-span-2 mx-3 md:me-10" placeholder="ex: hello123@gmail.com" name="email" />
                 </div>
                 <div className='grid grid-cols-3 items-center mb-4'>
+                    {isSubmitted && errors.birthday &&
+                        <div className='col-span-3 grid grid-cols-3'>
+                            <div className='col-span-1'></div>
+                            <div className="text-red-500 col-span-2 px-3 flex justify-start text-xs font-bold">Birthday is required.</div>
+                        </div>}
                     <label className='ps-2 md:ps-4 col-span-1 text-center font-darling text-lg text-[#752727] flex justify-center' htmlFor="block rounded p-3">
                         Birthday*
                     </label>
@@ -183,9 +242,9 @@ const FormComponent = ({ success, setSuccess }: FormProp) => {
                             name="birthday"
                             value={form.birthday}
                             onChange={updateForm}
-                            required
-                            error={errors.birthday}
-                            helperText={errors.birthday ? 'Birthday is required' : ''}
+                            // required
+                            // error={errors.birthday}
+                            // helperText={errors.birthday ? 'Birthday is required' : ''}
                             InputLabelProps={{ shrink: true }}
                             inputProps={{ max: new Date().toISOString().split("T")[0] }}
                         />
@@ -199,23 +258,32 @@ const FormComponent = ({ success, setSuccess }: FormProp) => {
                     <TextInput theme={customText} color="white" value={form.address} onChange={updateForm} type="text" className="col-span-2 mx-3 md:me-10" placeholder="Enter Address" name="address" maxLength={100} />
                 </div>
                 <div className='grid grid-cols-3 items-center mb-4'>
-                    {isSubmitted && phoneError && <div className="text-red-500 col-span-3 text-center px-3 flex justify-center text-sm font-bold">{phoneError}</div>}
+                    {isSubmitted && phoneError && <div className='col-span-3 grid grid-cols-3'>
+                        <div className='col-span-1'></div>
+                        <div className="text-red-500 col-span-2 px-3 flex justify-start text-xs font-bold">{phoneError}</div>
+                    </div>}
                     <label className='ps-2 md:ps-4 col-span-1 text-center font-darling text-lg text-[#752727] flex justify-center' htmlFor="block rounded p-3">
                         Phone Number
                     </label>
                     <TextInput theme={customText} color="white" value={form.phoneNumber} onChange={updateForm} type="text" className="col-span-2 mx-3 md:me-10" placeholder="ex: (###)-###-####" name="phoneNumber" />
                 </div>
                 <div className='grid grid-cols-3 items-center mb-4'>
+                    {(isSubmitted && errors.password == true) && <div className='col-span-3 grid grid-cols-3'>
+                        <div className='col-span-1'></div>
+                        <div className="text-red-500 col-span-2 px-3 flex justify-start text-xs font-bold">Password is required.</div>
+                    </div>}
+                    {(isSubmitted && formatError && !errors.password) && <div className='col-span-3 grid grid-cols-3'>
+                        <div className='col-span-1'></div>
+                        <div className="text-red-500 col-span-2 px-3 flex justify-start text-xs font-bold">{formatError}</div>
+                    </div>}
                     <label className='ps-2 md:ps-4 col-span-1 text-center font-darling text-lg text-[#752727] flex justify-center' htmlFor="block rounded p-3">
                         Password*
                     </label>
                     <div className='col-span-2 mx-3 md:me-10 relative'>
                         {passVisibility ?
                             <>
-                                <TextInput theme={customText} color="white" value={form.password} onChange={updateForm} type="text" placeholder="Enter Password" name="password" required
+                                <TextInput theme={customText} color="white" value={form.password} onChange={updateForm} type="text" placeholder="Enter Password" name="password"
                                     minLength={15}
-                                    pattern="^(?=.*[A-Z])(?=.*[0-9])(?=.*[?@#$%^&*])[A-Za-z0-9?@#$%^&*]{15,}$"
-                                    title="Password must be at least 15 characters and have at least one capital letter, one number, and one special character (? @ # $ % ^ & *)."
                                 />
                                 <Tooltip onClick={() => { setPassVisibility(!passVisibility) }} title='Hide Password' placement='top'>
                                     <RemoveRedEyeIcon fontSize="medium" className="me-1 absolute right-3 bottom-2 cursor-pointer" />
@@ -223,10 +291,7 @@ const FormComponent = ({ success, setSuccess }: FormProp) => {
                             </>
                             :
                             <>
-                                <TextInput theme={customText} color="white" value={form.password} onChange={updateForm} type="password" placeholder="Enter Password" name="password" required
-                                    minLength={15}
-                                    pattern="^(?=.*[A-Z])(?=.*[0-9])(?=.*[?@#$%^&*])[A-Za-z0-9?@#$%^&*]{15,}$"
-                                    title="Password must be at least 15 characters and have at least one capital letter, one number, and one special character (? @ # $ % ^ & *)."
+                                <TextInput theme={customText} color="white" value={form.password} onChange={updateForm} type="password" placeholder="Enter Password" name="password"
                                 />
                                 <Tooltip onClick={() => { setPassVisibility(!passVisibility) }} title='Show Password' placement='top'>
                                     <VisibilityOffIcon fontSize="medium" className="me-1 absolute right-3 bottom-2 cursor-pointer" />
@@ -236,21 +301,28 @@ const FormComponent = ({ success, setSuccess }: FormProp) => {
                     </div>
                 </div>
                 <div className='grid grid-cols-3 items-center mb-4'>
-                    {isSubmitted && passwordError && <div className="text-red-500 col-span-3 text-center px-3 flex justify-center text-sm font-bold">{passwordError}</div>}
+                    {isSubmitted && passwordError && <div className='col-span-3 grid grid-cols-3'>
+                        <div className='col-span-1'></div>
+                        <div className="text-red-500 col-span-2 px-3 flex justify-start text-xs font-bold">{passwordError}</div>
+                    </div>}
+                    {(isSubmitted && errors.confirmation == true) && <div className='col-span-3 grid grid-cols-3'>
+                        <div className='col-span-1'></div>
+                        <div className="text-red-500 col-span-2 px-3 flex justify-start text-xs font-bold">Please confirm Password.</div>
+                    </div>}
                     <label className='ps-2 md:ps-4 col-span-1 text-center flex justify-center font-darling text-lg text-[#752727]' htmlFor="block rounded p-3">
                         Confirm Password*
                     </label>
                     <div className='col-span-2 mx-3 md:me-10 relative'>
                         {confirmVisibility ?
                             <>
-                                <TextInput theme={customText} color="white" value={form.confirmPassword} onChange={updateForm} type="text" placeholder="Confirm Password" name="confirmPassword" required minLength={15} />
+                                <TextInput theme={customText} color="white" value={form.confirmPassword} onChange={updateForm} type="text" placeholder="Confirm Password" name="confirmPassword" />
                                 <Tooltip onClick={() => { setConfirmVisibility(!confirmVisibility) }} title='Hide Password' placement='top'>
                                     <RemoveRedEyeIcon fontSize="medium" className="me-1 absolute right-3 bottom-2 cursor-pointer" />
                                 </Tooltip>
                             </>
                             :
                             <>
-                                <TextInput theme={customText} color="white" value={form.confirmPassword} onChange={updateForm} type="password" placeholder="Confirm Password" name="confirmPassword" required minLength={15} />
+                                <TextInput theme={customText} color="white" value={form.confirmPassword} onChange={updateForm} type="password" placeholder="Confirm Password" name="confirmPassword" />
                                 <Tooltip onClick={() => { setConfirmVisibility(!confirmVisibility) }} title='Show Password' placement='top'>
                                     <VisibilityOffIcon fontSize="medium" className="me-1 absolute right-3 bottom-2 cursor-pointer" />
                                 </Tooltip>
@@ -259,7 +331,7 @@ const FormComponent = ({ success, setSuccess }: FormProp) => {
 
                 </div>
 
-                <div className='absolute bottom-6 right-7'>
+                <div className='absolute bottom-4 right-7'>
                     <button className={`text-white py-2 px-4 rounded-xl font-darling ${isFilled ? 'bg-[#56b681] hover:bg-green-700' : ' bg-slate-300 cursor-default'}`}>
                         Submit
                     </button>
