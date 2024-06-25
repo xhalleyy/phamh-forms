@@ -283,7 +283,7 @@ const FormComponent = ({ success, setSuccess, isSubmitted, setIsSubmitted, isFil
                         {passVisibility ?
                             <>
                                 <TextInput theme={customText} color="white" value={form.password} onChange={updateForm} type="text" placeholder="Enter Password" name="password"
-                                    minLength={15}
+                                    
                                 />
                                 <Tooltip onClick={() => { setPassVisibility(!passVisibility) }} title='Hide Password' placement='top'>
                                     <RemoveRedEyeIcon fontSize="medium" className="me-1 absolute right-3 bottom-2 cursor-pointer" />
