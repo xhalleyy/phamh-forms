@@ -162,6 +162,7 @@ const FormComponent = ({ success, setSuccess, isSubmitted, setIsSubmitted, isFil
                 },
                 "colors": {
                     "white": "border-gray-400 bg-white focus:border-blue-500 focus:ring-blue-500",
+                    "red": "border-red-500 bg-white focus:border-blue-500 focus:ring-blue-500"
                 },
                 "withRightIcon": {
                     "on": "pr-10",
@@ -197,7 +198,7 @@ const FormComponent = ({ success, setSuccess, isSubmitted, setIsSubmitted, isFil
                     <label className='ps-2 md:ps-4 col-span-1 text-center font-darling text-lg text-[#752727] flex justify-center' htmlFor="block rounded p-3">
                         First Name*
                     </label>
-                    <TextInput theme={customText} color="white" value={form.firstName} onChange={updateForm} type="text" className="col-span-2 mx-3 md:me-10 bg-white active:bg-[#feffc7] focus-within:bg-[#feffc7]" placeholder="Enter First Name" name="firstName" maxLength={100} />
+                    <TextInput theme={customText} color={errors.firstName ? "red" : "white"} value={form.firstName} onChange={updateForm} type="text" className="col-span-2 mx-3 md:me-10 bg-white active:bg-[#feffc7] focus-within:bg-[#feffc7]" placeholder="Enter First Name" name="firstName" maxLength={100} />
                 </div>
                 <div className='grid grid-cols-3 items-center mb-4'>
                     {isSubmitted && errors.lastName &&
@@ -209,7 +210,7 @@ const FormComponent = ({ success, setSuccess, isSubmitted, setIsSubmitted, isFil
                     <label className='ps-2 md:ps-4 col-span-1 text-center font-darling text-lg text-[#752727] flex justify-center' htmlFor="block rounded p-3">
                         Last Name*
                     </label>
-                    <TextInput theme={customText} color="white" value={form.lastName} onChange={updateForm} type="text" className="col-span-2 mx-3 md:me-10" placeholder="Enter Last Name" name="lastName" maxLength={100} />
+                    <TextInput theme={customText} color={errors.lastName ? "red" : "white"} value={form.lastName} onChange={updateForm} type="text" className="col-span-2 mx-3 md:me-10" placeholder="Enter Last Name" name="lastName" maxLength={100} />
                 </div>
                 <div className='grid grid-cols-3 items-center mb-4'>
                     {isSubmitted && errors.email && <div className='col-span-3 grid grid-cols-3'>
@@ -223,7 +224,7 @@ const FormComponent = ({ success, setSuccess, isSubmitted, setIsSubmitted, isFil
                     <label className='ps-2 md:ps-4 col-span-1 text-center font-darling text-lg text-[#752727] flex justify-center' htmlFor="block rounded p-3">
                         Email*
                     </label>
-                    <TextInput theme={customText} color="white" value={form.email} onChange={updateForm} type="text" className="col-span-2 mx-3 md:me-10" placeholder="ex: hello123@gmail.com" name="email" />
+                    <TextInput theme={customText} color={errors.email || emailError ? "red" : "white"} value={form.email} onChange={updateForm} type="text" className="col-span-2 mx-3 md:me-10" placeholder="ex: hello123@gmail.com" name="email" />
                 </div>
                 <div className='grid grid-cols-3 items-center mb-4'>
                     {isSubmitted && errors.birthday &&
@@ -282,7 +283,7 @@ const FormComponent = ({ success, setSuccess, isSubmitted, setIsSubmitted, isFil
                     <div className='col-span-2 mx-3 md:me-10 relative'>
                         {passVisibility ?
                             <>
-                                <TextInput theme={customText} color="white" value={form.password} onChange={updateForm} type="text" placeholder="Enter Password" name="password"
+                                <TextInput theme={customText} color={errors.password || formatError || passwordError ? "red" : "white"} value={form.password} onChange={updateForm} type="text" placeholder="Enter Password" name="password"
                                     
                                 />
                                 <Tooltip onClick={() => { setPassVisibility(!passVisibility) }} title='Hide Password' placement='top'>
@@ -291,7 +292,7 @@ const FormComponent = ({ success, setSuccess, isSubmitted, setIsSubmitted, isFil
                             </>
                             :
                             <>
-                                <TextInput theme={customText} color="white" value={form.password} onChange={updateForm} type="password" placeholder="Enter Password" name="password"
+                                <TextInput theme={customText} color={errors.password || formatError || passwordError ? "red" : "white"} value={form.password} onChange={updateForm} type="password" placeholder="Enter Password" name="password"
                                 />
                                 <Tooltip onClick={() => { setPassVisibility(!passVisibility) }} title='Show Password' placement='top'>
                                     <VisibilityOffIcon fontSize="medium" className="me-1 absolute right-3 bottom-2 cursor-pointer" />
@@ -315,14 +316,14 @@ const FormComponent = ({ success, setSuccess, isSubmitted, setIsSubmitted, isFil
                     <div className='col-span-2 mx-3 md:me-10 relative'>
                         {confirmVisibility ?
                             <>
-                                <TextInput theme={customText} color="white" value={form.confirmPassword} onChange={updateForm} type="text" placeholder="Confirm Password" name="confirmPassword" />
+                                <TextInput theme={customText} color={(errors.confirmation || passwordError) ? "red" : "white"} value={form.confirmPassword} onChange={updateForm} type="text" placeholder="Confirm Password" name="confirmPassword" />
                                 <Tooltip onClick={() => { setConfirmVisibility(!confirmVisibility) }} title='Hide Password' placement='top'>
                                     <RemoveRedEyeIcon fontSize="medium" className="me-1 absolute right-3 bottom-2 cursor-pointer" />
                                 </Tooltip>
                             </>
                             :
                             <>
-                                <TextInput theme={customText} color="white" value={form.confirmPassword} onChange={updateForm} type="password" placeholder="Confirm Password" name="confirmPassword" />
+                                <TextInput theme={customText} color={(errors.confirmation || passwordError) ? "red" : "white"} value={form.confirmPassword} onChange={updateForm} type="password" placeholder="Confirm Password" name="confirmPassword" />
                                 <Tooltip onClick={() => { setConfirmVisibility(!confirmVisibility) }} title='Show Password' placement='top'>
                                     <VisibilityOffIcon fontSize="medium" className="me-1 absolute right-3 bottom-2 cursor-pointer" />
                                 </Tooltip>
