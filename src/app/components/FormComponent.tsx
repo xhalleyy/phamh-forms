@@ -4,12 +4,6 @@ import { CustomFlowbiteTheme, Datepicker, TextInput } from "flowbite-react";
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import { TextField, Tooltip } from '@mui/material';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import dayjs, { Dayjs } from 'dayjs';
-import { error } from 'console';
 
 type FormProp = {
     success: boolean | undefined
@@ -17,7 +11,7 @@ type FormProp = {
 }
 
 const FormComponent = ({ success, setSuccess }: FormProp) => {
-    const [form, setForm] = useState({ firstName: '', lastName: '', email: '', birthday: null as Dayjs | null, address: '', phoneNumber: '', password: '', confirmPassword: '' })
+    const [form, setForm] = useState({ firstName: '', lastName: '', email: '', birthday: '', address: '', phoneNumber: '', password: '', confirmPassword: '' })
     const [emailError, setEmailError] = useState('');
     const [phoneError, setPhoneError] = useState('');
     const [isSubmitted, setIsSubmitted] = useState(false)
@@ -48,17 +42,6 @@ const FormComponent = ({ success, setSuccess }: FormProp) => {
             return false;
         }
         return true;
-    };
-
-    const handleDateChange = (date: Dayjs | null) => {
-        setForm({
-            ...form,
-            birthday: date
-        });
-        setErrors({
-            ...errors,
-            birthday: date === null
-        });
     };
 
     const updateForm = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -95,7 +78,7 @@ const FormComponent = ({ success, setSuccess }: FormProp) => {
 
 
         setEmailError(isEmailValid ? '' : 'Invalid email format. Please make sure there is an @ with no spaces.');
-        setPhoneError(isPhoneValid ? '' : 'Invalid phone number format, ex: (XXX)-###-####');
+        setPhoneError(isPhoneValid ? '' : 'Invalid phone number format, ex: (###)-###-####');
 
         setIsSubmitted(true);
     }
@@ -106,7 +89,7 @@ const FormComponent = ({ success, setSuccess }: FormProp) => {
                 firstName: '',
                 lastName: '',
                 email: '',
-                birthday: null,
+                birthday: '',
                 address: '',
                 phoneNumber: '',
                 password: '',
@@ -121,8 +104,6 @@ const FormComponent = ({ success, setSuccess }: FormProp) => {
 
         }
     }, [success]);
-
-    // useEffect(()=>{console.log(form)},[form])
 
     const customText: CustomFlowbiteTheme['textInput'] = {
         "base": "flex",
@@ -173,51 +154,47 @@ const FormComponent = ({ success, setSuccess }: FormProp) => {
             <form onSubmit={handleForm} action="" className='pt-10'>
                 <div className='grid grid-cols-3 items-center mb-4'>
                     <label className='ps-2 md:ps-4 col-span-1 text-center font-darling text-lg text-[#752727] flex justify-center' htmlFor="block rounded p-3">
-                        First Name *
+                        First Name*
                     </label>
                     <TextInput theme={customText} color="white" value={form.firstName} onChange={updateForm} type="text" className="col-span-2 mx-3 md:me-10 bg-white active:bg-[#feffc7] focus-within:bg-[#feffc7]" placeholder="Enter First Name" name="firstName" required maxLength={100} />
                 </div>
                 <div className='grid grid-cols-3 items-center mb-4'>
                     <label className='ps-2 md:ps-4 col-span-1 text-center font-darling text-lg text-[#752727] flex justify-center' htmlFor="block rounded p-3">
-                        Last Name *
+                        Last Name*
                     </label>
                     <TextInput theme={customText} color="white" value={form.lastName} onChange={updateForm} type="text" className="col-span-2 mx-3 md:me-10" placeholder="Enter Last Name" name="lastName" required maxLength={100} />
                 </div>
                 <div className='grid grid-cols-3 items-center mb-4'>
                     {isSubmitted && emailError && <div className="text-red-500 col-span-3 text-center px-3 flex justify-center text-sm font-bold">{emailError}</div>}
                     <label className='ps-2 md:ps-4 col-span-1 text-center font-darling text-lg text-[#752727] flex justify-center' htmlFor="block rounded p-3">
-                        Email *
+                        Email*
                     </label>
                     <TextInput theme={customText} color="white" value={form.email} onChange={updateForm} type="text" className="col-span-2 mx-3 md:me-10" placeholder="ex: hello123@gmail.com" name="email" required />
                 </div>
                 <div className='grid grid-cols-3 items-center mb-4'>
-                    {isSubmitted && errors.birthday && <div className="text-red-500 col-span-3 text-center px-3 flex justify-center text-sm font-bold">Please enter your birthday</div>}
                     <label className='ps-2 md:ps-4 col-span-1 text-center font-darling text-lg text-[#752727] flex justify-center' htmlFor="block rounded p-3">
-                        Birthday *
+                        Birthday*
                     </label>
-                    <div className='col-span-2 mx-3 md:me-10 flex items-center'>
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DatePicker
-                                label="mm/dd/yyyy"
-                                value={form.birthday}
-                                disableFuture
-                                onChange={handleDateChange}
-                                // renderInput={(params: any) => <TextField {...params} />}
-                                slotProps={{
-                                    textField: {
-                                        required: true,
-                                        error: errors.birthday,
-                                        title: "Please enter a birthday"
-                                    }
-                                }}
-                            />
-                        </LocalizationProvider>
+                    <div className='col-span-2 mx-3 md:me-10 flex items-center rounded-md'>
+                        <TextField
+                            // label="Birthday"
+                            className='!border-gray-400 !bg-white !focus:border-blue-500 !focus:ring-blue-500'
+                            type="date"
+                            name="birthday"
+                            value={form.birthday}
+                            onChange={updateForm}
+                            required
+                            error={errors.birthday}
+                            helperText={errors.birthday ? 'Birthday is required' : ''}
+                            InputLabelProps={{ shrink: true }}
+                            inputProps={{ max: new Date().toISOString().split("T")[0] }}
+                        />
 
                     </div>
                 </div>
                 <div className='grid grid-cols-3 items-center mb-4'>
                     <label className='ps-2 md:ps-4 col-span-1 text-center font-darling text-lg text-[#752727] flex justify-center' htmlFor="block rounded p-3">
-                        Home Address
+                        Address
                     </label>
                     <TextInput theme={customText} color="white" value={form.address} onChange={updateForm} type="text" className="col-span-2 mx-3 md:me-10" placeholder="Enter Address" name="address" maxLength={100} />
                 </div>
@@ -226,24 +203,60 @@ const FormComponent = ({ success, setSuccess }: FormProp) => {
                     <label className='ps-2 md:ps-4 col-span-1 text-center font-darling text-lg text-[#752727] flex justify-center' htmlFor="block rounded p-3">
                         Phone Number
                     </label>
-                    <TextInput theme={customText} color="white" value={form.phoneNumber} onChange={updateForm} type="text" className="col-span-2 mx-3 md:me-10" placeholder="ex: (XXX)-###-####" name="phoneNumber" />
+                    <TextInput theme={customText} color="white" value={form.phoneNumber} onChange={updateForm} type="text" className="col-span-2 mx-3 md:me-10" placeholder="ex: (###)-###-####" name="phoneNumber" />
                 </div>
                 <div className='grid grid-cols-3 items-center mb-4'>
                     <label className='ps-2 md:ps-4 col-span-1 text-center font-darling text-lg text-[#752727] flex justify-center' htmlFor="block rounded p-3">
-                        Password *
+                        Password*
                     </label>
-                    <TextInput theme={customText} color="white" value={form.password} onChange={updateForm} type="password" className="col-span-2 mx-3 md:me-10" placeholder="Enter Password" name="password" required
-                        minLength={15}
-                        pattern="^(?=.*[A-Z])(?=.*[0-9])(?=.*[?@#$%^&*])[A-Za-z0-9?@#$%^&*]{15,}$"
-                        title="Password must be at least 15 characters and have at least one capital letter, one number, and one special character (? @ # $ % ^ & *)."
-                    />
+                    <div className='col-span-2 mx-3 md:me-10 relative'>
+                        {passVisibility ?
+                            <>
+                                <TextInput theme={customText} color="white" value={form.password} onChange={updateForm} type="text" placeholder="Enter Password" name="password" required
+                                    minLength={15}
+                                    pattern="^(?=.*[A-Z])(?=.*[0-9])(?=.*[?@#$%^&*])[A-Za-z0-9?@#$%^&*]{15,}$"
+                                    title="Password must be at least 15 characters and have at least one capital letter, one number, and one special character (? @ # $ % ^ & *)."
+                                />
+                                <Tooltip onClick={() => { setPassVisibility(!passVisibility) }} title='Hide Password' placement='top'>
+                                    <RemoveRedEyeIcon fontSize="medium" className="me-1 absolute right-3 bottom-2 cursor-pointer" />
+                                </Tooltip>
+                            </>
+                            :
+                            <>
+                                <TextInput theme={customText} color="white" value={form.password} onChange={updateForm} type="password" placeholder="Enter Password" name="password" required
+                                    minLength={15}
+                                    pattern="^(?=.*[A-Z])(?=.*[0-9])(?=.*[?@#$%^&*])[A-Za-z0-9?@#$%^&*]{15,}$"
+                                    title="Password must be at least 15 characters and have at least one capital letter, one number, and one special character (? @ # $ % ^ & *)."
+                                />
+                                <Tooltip onClick={() => { setPassVisibility(!passVisibility) }} title='Show Password' placement='top'>
+                                    <VisibilityOffIcon fontSize="medium" className="me-1 absolute right-3 bottom-2 cursor-pointer" />
+                                </Tooltip>
+                            </>}
+
+                    </div>
                 </div>
                 <div className='grid grid-cols-3 items-center mb-4'>
                     {isSubmitted && passwordError && <div className="text-red-500 col-span-3 text-center px-3 flex justify-center text-sm font-bold">{passwordError}</div>}
                     <label className='ps-2 md:ps-4 col-span-1 text-center flex justify-center font-darling text-lg text-[#752727]' htmlFor="block rounded p-3">
-                        Confirm Password *
+                        Confirm Password*
                     </label>
-                    <TextInput theme={customText} color="white" value={form.confirmPassword} onChange={updateForm} type="password" className="col-span-2 mx-3 md:me-10 " placeholder="Confirm Password" name="confirmPassword" required minLength={15} />
+                    <div className='col-span-2 mx-3 md:me-10 relative'>
+                        {confirmVisibility ?
+                            <>
+                                <TextInput theme={customText} color="white" value={form.confirmPassword} onChange={updateForm} type="text" placeholder="Confirm Password" name="confirmPassword" required minLength={15} />
+                                <Tooltip onClick={() => { setConfirmVisibility(!confirmVisibility) }} title='Hide Password' placement='top'>
+                                    <RemoveRedEyeIcon fontSize="medium" className="me-1 absolute right-3 bottom-2 cursor-pointer" />
+                                </Tooltip>
+                            </>
+                            :
+                            <>
+                                <TextInput theme={customText} color="white" value={form.confirmPassword} onChange={updateForm} type="password" placeholder="Confirm Password" name="confirmPassword" required minLength={15} />
+                                <Tooltip onClick={() => { setConfirmVisibility(!confirmVisibility) }} title='Show Password' placement='top'>
+                                    <VisibilityOffIcon fontSize="medium" className="me-1 absolute right-3 bottom-2 cursor-pointer" />
+                                </Tooltip>
+                            </>}
+                    </div>
+
                 </div>
 
                 <div className='absolute bottom-6 right-7'>

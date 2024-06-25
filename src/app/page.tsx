@@ -6,6 +6,7 @@ import { useState } from "react";
 
 export default function Home() {
   const [success, setSuccess] = useState<boolean | undefined>(undefined);
+  const [isSubmitted, setIsSubmitted] = useState(false)
   return (
     <div className="backgroundImg relative">
       <div className='absolute top-3 md:top-8 lg:top-10 right-2 md:right-10'>
