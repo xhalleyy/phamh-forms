@@ -4,6 +4,7 @@ import { CustomFlowbiteTheme, Datepicker, TextInput } from "flowbite-react";
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import { TextField, Tooltip } from '@mui/material';
+import { grey } from '@mui/material/colors';
 import { error } from 'console';
 
 type FormProp = {
@@ -76,6 +77,7 @@ const FormComponent = ({ success, setSuccess, isSubmitted, setIsSubmitted, isFil
             [e.target.name]: e.target.value
         })
 
+        
         if (e.target.name === 'password' || e.target.name === 'confirmPassword') {
             setPasswordError('');
         }
@@ -162,7 +164,7 @@ const FormComponent = ({ success, setSuccess, isSubmitted, setIsSubmitted, isFil
                 },
                 "colors": {
                     "white": "border-gray-400 bg-white focus:border-blue-500 focus:ring-blue-500",
-                    "red": "border-red-500 bg-white focus:border-blue-500 focus:ring-blue-500"
+                    "red": "border-red-500 border-2 bg-white focus:border-blue-500 focus:ring-blue-500"
                 },
                 "withRightIcon": {
                     "on": "pr-10",
@@ -238,14 +240,13 @@ const FormComponent = ({ success, setSuccess, isSubmitted, setIsSubmitted, isFil
                     <div className='col-span-2 mx-3 md:me-10 flex items-center rounded-md'>
                         <TextField
                             // label="Birthday"
-                            className='!border-gray-400 !bg-white !focus:border-blue-500 !focus:ring-blue-500'
+                            className='!border-gray-400 !bg-white' 
                             type="date"
                             name="birthday"
                             value={form.birthday}
                             onChange={updateForm}
-                            // required
-                            // error={errors.birthday}
-                            // helperText={errors.birthday ? 'Birthday is required' : ''}
+                            color={errors.birthday ? 'warning' : 'info'}
+                            focused={errors.birthday ? true: false}
                             InputLabelProps={{ shrink: true }}
                             inputProps={{ max: new Date().toISOString().split("T")[0] }}
                         />
