@@ -59,8 +59,8 @@ const FormComponent = ({ success, setSuccess, isSubmitted, setIsSubmitted, isFil
         return true;
     };
 
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[?@#$%^&*])[A-Za-z0-9?@#$%^&*]{15,}$/;
     const formattedPassword = (password: string) => {
-        const passwordRegex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[?@#$%^&*])[A-Za-z0-9?@#$%^&*]{15,}$/;
         if (!passwordRegex.test(password)) {
             setFormatError('Password must be at least 15 characters and have at least one capital letter, one number, and one special character (? @ # $ % ^ & *).');
         } else {
@@ -107,7 +107,7 @@ const FormComponent = ({ success, setSuccess, isSubmitted, setIsSubmitted, isFil
         };
         setErrors(updatedErrors);
 
-        if (isFilled && isEmailValid && isPhoneValid && matchedPasswords && !updatedErrors.firstName && !updatedErrors.lastName && !updatedErrors.email && !updatedErrors.birthday) {
+        if (isFilled && isEmailValid && isPhoneValid && matchedPasswords && !updatedErrors.firstName && !updatedErrors.lastName && !updatedErrors.email && !updatedErrors.birthday && passwordRegex.test(form.password)) {
             setSuccess(true);
         }else{
             setSuccess(false)
