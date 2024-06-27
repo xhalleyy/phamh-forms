@@ -35,9 +35,9 @@ const FormComponent = ({ success, setSuccess, isSubmitted, setIsSubmitted, isFil
         confirmation: false
     });
 
-    if(form.firstName !== "" && form.lastName !== "" && form.email !== "" && form.password !== "" && form.confirmPassword !== "" && form.birthday !== null){
+    if (form.firstName !== "" && form.lastName !== "" && form.email !== "" && form.password !== "" && form.confirmPassword !== "" && form.birthday !== null) {
         setIsFilled(true)
-    }else{
+    } else {
         setIsFilled(false)
     }
 
@@ -77,7 +77,6 @@ const FormComponent = ({ success, setSuccess, isSubmitted, setIsSubmitted, isFil
             [e.target.name]: e.target.value
         })
 
-        
         if (e.target.name === 'password' || e.target.name === 'confirmPassword') {
             setPasswordError('');
         }
@@ -93,7 +92,7 @@ const FormComponent = ({ success, setSuccess, isSubmitted, setIsSubmitted, isFil
             isPhoneValid = validPhoneNumber(form.phoneNumber)
         }
 
-        if(form.password !== '') {
+        if (form.password !== '') {
             formattedPassword(form.password)
         }
 
@@ -108,8 +107,35 @@ const FormComponent = ({ success, setSuccess, isSubmitted, setIsSubmitted, isFil
         setErrors(updatedErrors);
 
         if (isFilled && isEmailValid && isPhoneValid && matchedPasswords && !updatedErrors.firstName && !updatedErrors.lastName && !updatedErrors.email && !updatedErrors.birthday && passwordRegex.test(form.password)) {
+            const userData = {
+                id: 0,
+                first: form.firstName,
+                last: form.lastName,
+                email: form.email,
+                doB: form.birthday,
+                address: form.address,
+                phone: form.phoneNumber,
+                password: form.password
+            }
+
+            const addNewFormData = async (data: any) => {
+                const response = await fetch("http://localhost:5046/AddFormData", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                // if (!res.ok) {
+                //     Error(`An error has occured: ${res.status}`);
+                // }
+            };
+
+            addNewFormData(userData);
+
             setSuccess(true);
-        }else{
+        } else {
             setSuccess(false)
         }
 
@@ -122,6 +148,14 @@ const FormComponent = ({ success, setSuccess, isSubmitted, setIsSubmitted, isFil
 
     useEffect(() => {
         if (success) {
+            const getPeeps = async () => {
+                const promise = await fetch("http://localhost:5046/GetFormData");
+                const data = await promise.json();
+                console.log(data);
+            };
+
+            getPeeps();
+
             setForm({
                 firstName: '',
                 lastName: '',
@@ -219,7 +253,7 @@ const FormComponent = ({ success, setSuccess, isSubmitted, setIsSubmitted, isFil
                         <div className='col-span-1'></div>
                         <div className="text-red-500 col-span-2 px-3 flex justify-start text-xs font-bold">Email is required.</div>
                     </div>}
-                    {(isSubmitted && emailError && !errors.email )&& <div className='col-span-3 grid grid-cols-3'>
+                    {(isSubmitted && emailError && !errors.email) && <div className='col-span-3 grid grid-cols-3'>
                         <div className='col-span-1'></div>
                         <div className="text-red-500 col-span-2 px-3 flex justify-start text-xs font-bold">{emailError}</div>
                     </div>}
@@ -240,13 +274,13 @@ const FormComponent = ({ success, setSuccess, isSubmitted, setIsSubmitted, isFil
                     <div className='col-span-2 mx-3 md:me-10 flex items-center rounded-md'>
                         <TextField
                             // label="Birthday"
-                            className='!border-gray-400 !bg-white' 
+                            className='!border-gray-400 !bg-white'
                             type="date"
                             name="birthday"
                             value={form.birthday}
                             onChange={updateForm}
                             color={errors.birthday ? 'warning' : 'info'}
-                            focused={errors.birthday ? true: false}
+                            focused={errors.birthday ? true : false}
                             InputLabelProps={{ shrink: true }}
                             inputProps={{ max: new Date().toISOString().split("T")[0] }}
                         />
@@ -285,7 +319,7 @@ const FormComponent = ({ success, setSuccess, isSubmitted, setIsSubmitted, isFil
                         {passVisibility ?
                             <>
                                 <TextInput theme={customText} color={errors.password || formatError || passwordError ? "red" : "white"} value={form.password} onChange={updateForm} type="text" placeholder="Enter Password" name="password"
-                                    
+
                                 />
                                 <Tooltip onClick={() => { setPassVisibility(!passVisibility) }} title='Hide Password' placement='top'>
                                     <RemoveRedEyeIcon fontSize="medium" className="me-1 absolute right-3 bottom-2 cursor-pointer" />
