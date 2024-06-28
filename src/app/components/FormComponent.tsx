@@ -4,8 +4,8 @@ import { CustomFlowbiteTheme, Datepicker, TextInput } from "flowbite-react";
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import { TextField, Tooltip } from '@mui/material';
-import { grey } from '@mui/material/colors';
-import { error } from 'console';
+// import { grey } from '@mui/material/colors';
+// import { error } from 'console';
 
 type FormProp = {
     success: boolean | undefined
@@ -221,7 +221,7 @@ const FormComponent = ({ success, setSuccess, isSubmitted, setIsSubmitted, isFil
     }
 
     return (
-        <div className='bg-white/90 border-4 border-[#fe81bb] h-[720px] md:h-[670px] md:w-[550px] rounded-3xl shadow-md'>
+        <div className='bg-white/90 border-4 border-[#fe81bb] h-[670px] md:w-[550px] rounded-3xl shadow-md'>
 
             <form onSubmit={handleForm} action="" className='pt-9'>
                 <div className='grid grid-cols-3 items-center mb-4'>

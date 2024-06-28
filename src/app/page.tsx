@@ -9,7 +9,7 @@ export default function Home() {
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [isFilled, setIsFilled] = useState(false)
   return (
-    <div className="backgroundImg relative">
+    <div className="relative">
       <div className='absolute top-3 md:top-8 lg:top-10 right-2 md:right-10'>
         {success && (
           <div className="w-72 rounded-xl">
@@ -26,7 +26,7 @@ export default function Home() {
           </div>
         )}
       </div>
-      <div className="absolute top-28 md:top-32 lg:top-10 md:left-28">
+      <div className="absolute top-28 md:top-32 pb-10 lg:top-10 md:left-28 max-md:left-0 max-md:right-0 max-md:mx-auto max-w-[550px]">
         <div className="relative">
           <h1 className="absolute font-darling text-5xl -top-6 left-[33%] text-[#752727] text-shadow">Sign Up</h1>
           <FormComponent success={success} setSuccess={setSuccess} isSubmitted={isSubmitted} setIsSubmitted={setIsSubmitted} isFilled={isFilled} setIsFilled={setIsFilled} />

@@ -14,10 +14,17 @@
 
 }
 
-.backgroundImg {
-  background: url(../utils/background2.png) no-repeat center center fixed; 
+body {
+  /* background: url(../utils/background2.png) no-repeat center center fixed;  */
+  /* background-size: cover;
+  min-height: 100vh; */
+
+  background-image: url(../utils/background2.png);
+  background-repeat: no-repeat;
   background-size: cover;
-  min-height: 100vh;
+  background-position: top;
+  background-attachment: fixed;
+  background-color: black;
 }
 
 .text-shadow {
