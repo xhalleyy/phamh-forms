@@ -127,9 +127,9 @@ const FormComponent = ({ success, setSuccess, isSubmitted, setIsSubmitted, isFil
                     body: JSON.stringify(data),
                 });
 
-                // if (!res.ok) {
-                //     Error(`An error has occured: ${res.status}`);
-                // }
+                if (!response.ok) {
+                    Error(`An error has occured: ${response.status}`);
+                }
             };
 
             addNewFormData(userData);
